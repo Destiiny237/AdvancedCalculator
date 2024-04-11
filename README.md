@@ -2,7 +2,7 @@
 
 **AdvancedCalculator** - продвинутый калькулятор с расширенными возможностями.
 
-![image1](https://github.com/Destiiny237/AdvancedCalculator/master/imgs/image1.png)
+![image1](https://github.com/Destiiny237/AdvancedCalculator/assets/88925261/b9ddcc3d-386a-4b13-85a9-58245e57a999)
 
 ### Функциональность
 
