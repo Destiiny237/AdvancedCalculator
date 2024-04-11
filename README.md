@@ -2,6 +2,8 @@
 
 **AdvancedCalculator** - продвинутый калькулятор с расширенными возможностями.
 
+![image1](https://raw.githubusercontent.com/Destiiny237/AdvancedCalculator/master/src/imgs/image1.png)
+
 ### Функциональность
 
 * **Арифметика**: +, -, *, /, ^
