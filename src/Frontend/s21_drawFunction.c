@@ -149,75 +149,43 @@ void drawGrid(GtkWidget *widget, cairo_t *cr, double scaleX, double scaleY) {
 }
 
 double findLineWidth(double range) {
-  double width = 1;
-  if (range < 10.5) {
-    width = 0.05;
-  } else if (range < 20.5) {
-    width = 0.1;
-  } else if (range < 50.5) {
-    width = 0.1;
-  } else if (range < 100.5) {
-    width = 0.2;
-  } else if (range < 250.5) {
-    width = 0.7;
-  } else if (range < 500.5) {
-    width = 1;
-  } else if (range < 1000.5) {
-    width = 2;
-  } else if (range < 2500.5) {
-    width = 3;
-  } else if (range < 5000.5) {
-    width = 4;
-  } else if (range < 10000.5) {
-    width = 10;
-  } else if (range < 40000.5) {
-    width = 30;
-  } else if (range < 100000.5) {
-    width = 60;
-  } else if (range < 200000.5) {
-    width = 150;
-  } else if (range < 1000000.5) {
-    width = 500;
-  } else {
-    width = 10000;
-  }
-  return width;
+    // Base width for range = 1
+    const double base_width = 0.05;
+    
+    // Calculate width using logarithmic scaling
+    // This provides smooth transitions as range increases
+    double width = base_width * pow(log10(range + 1), 1.5);
+    
+    // Ensure minimum and maximum bounds
+    width = fmax(0.05, fmin(width, 10000.0));
+    
+    return width;
 }
 
 int findStep(double range) {
-  int step = 1;
-  if (range < 10.5) {
-    step = 1;
-  } else if (range < 20.5) {
-    step = 2;
-  } else if (range < 25.5) {
-    step = 5;
-  } else if (range < 50.5) {
-    step = 7;
-  } else if (range < 100.5) {
-    step = 20;
-  } else if (range < 250.5) {
-    step = 40;
-  } else if (range < 500.5) {
-    step = 100;
-  } else if (range < 1000.5) {
-    step = 200;
-  } else if (range < 2500.5) {
-    step = 500;
-  } else if (range < 5000.5) {
-    step = 1000;
-  } else if (range < 10000.5) {
-    step = 2000;
-  } else if (range < 40000.5) {
-    step = 5000;
-  } else if (range < 100000.5) {
-    step = 10000;
-  } else if (range < 200000.5) {
-    step = 20000;
-  } else if (range < 1000000.5) {
-    step = 100000;
-  } else {
-    step = 150000;
-  }
-  return step;
+    // Aim for approximately 10-20 grid lines in each direction
+    const int target_lines = 15;
+    
+    // Find the closest "nice" number for the step
+    double raw_step = range / target_lines;
+    
+    // Get the magnitude (power of 10) of the step
+    double magnitude = pow(10, floor(log10(raw_step)));
+    
+    // Normalize the step to between 1 and 10
+    double normalized = raw_step / magnitude;
+    
+    // Choose the closest "nice" number from 1, 2, 5, 10
+    int step;
+    if (normalized < 1.5)
+        step = magnitude;
+    else if (normalized < 3.5)
+        step = 2 * magnitude;
+    else if (normalized < 7.5)
+        step = 5 * magnitude;
+    else
+        step = 10 * magnitude;
+    
+    // Ensure minimum step of 1
+    return fmax(1, step);
 }

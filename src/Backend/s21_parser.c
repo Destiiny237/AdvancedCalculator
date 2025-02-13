@@ -120,38 +120,17 @@ char* expression_parser(char* expression) {
 }
 
 char* returnOperationType(int num) {
-  if (num == Bracket)
-    return "(";
-  else if (num == Plus)
-    return "+";
-  else if (num == Minus)
-    return "-";
-  else if (num == Multiply)
-    return "*";
-  else if (num == Divide)
-    return "/";
-  else if (num == Exponent)
-    return "^";
-  else if (num == s21_sin)
-    return "sin";
-  else if (num == s21_cos)
-    return "cos";
-  else if (num == s21_tan)
-    return "tan";
-  else if (num == s21_asin)
-    return "asin";
-  else if (num == s21_acos)
-    return "acos";
-  else if (num == s21_atan)
-    return "atan";
-  else if (num == Sqrt)
-    return "sqrt";
-  else if (num == Log)
-    return "log";
-  else if (num == Ln)
-    return "ln";
-  else if (num == Mod)
-    return "mod";
+  static const struct { int type; const char* str; } ops[] = {
+    {Bracket, "("}, {Plus, "+"}, {Minus, "-"}, {Multiply, "*"},
+    {Divide, "/"}, {Exponent, "^"}, {s21_sin, "sin"}, {s21_cos, "cos"},
+    {s21_tan, "tan"}, {s21_asin, "asin"}, {s21_acos, "acos"},
+    {s21_atan, "atan"}, {Sqrt, "sqrt"}, {Log, "log"}, {Ln, "ln"},
+    {Mod, "mod"}
+  };
+  
+  for (size_t i = 0; i < sizeof(ops)/sizeof(ops[0]); i++) {
+    if (ops[i].type == num) return (char*)ops[i].str;
+  }
   return "";
 }
 
@@ -168,18 +147,16 @@ stack_t* addOperationToStack(stack_t* stack, char* resultString, int priority,
 
 // correct unaru minus/plus
 void correctExpression(char* expression) {
-  int expressionLength = strlen(expression);
+  int len = strlen(expression);
   if (expression[0] == '-' || expression[0] == '+') {
-    memmove(expression + 1, expression, expressionLength + 1);
-    memset(expression, '0', 1);
+    memmove(expression + 1, expression, len + 1);
+    expression[0] = '0';
   }
-  for (int i = 1; i < (int)expressionLength; i++) {
-    if ((expression[i] == '-' || expression[i] == '+') &&
-        expression[i - 1] == '(') {
-      expression = realloc(expression, (expressionLength + 2) * sizeof(char));
-      memmove(expression + i + 1, expression + i,
-              (expressionLength - i + 1) * sizeof(char));
+  for (int i = 1; i < len; i++) {
+    if ((expression[i] == '-' || expression[i] == '+') && expression[i - 1] == '(') {
+      memmove(expression + i + 1, expression + i, len - i + 1);
       expression[i] = '0';
+      len++;
     }
   }
 }
